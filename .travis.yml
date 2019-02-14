@@ -5,8 +5,6 @@
 
 dist: xenial
 cache: pip
-# This appears to be necessary because we're not using a virtualenv.
-sudo: required
 
 addons:
     apt:
