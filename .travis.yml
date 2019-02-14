@@ -27,6 +27,9 @@ install:
     - build/dev.sh minimal
 
 script:
+    # Type checking with MyPy
+    - asdl/typed.sh iter-demo
+    - asdl/typed.sh iter-arith
     - test/lint.sh travis
     # Unit tests
     - test/unit.sh all
