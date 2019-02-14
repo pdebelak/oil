@@ -20,10 +20,9 @@ before_install:
     - test/spec.sh link-busybox-ash
 
 install:
-    # - pip install -r requirements.txt
     - pip install flake8 typing mypy_extensions
-    # TODO: we will want this later
-    # - pip3 install mypy
+    # mypy requires Python 3
+    - pip3 install mypy
     - build/dev.sh minimal
 
 script:
