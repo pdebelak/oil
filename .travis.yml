@@ -20,6 +20,9 @@ addons:
             - busybox-static
             - mksh
             - zsh
+              # since we're not using language: python
+            - python-pip
+            - python3-pip
 
 before_install:
     - test/spec.sh link-busybox-ash
