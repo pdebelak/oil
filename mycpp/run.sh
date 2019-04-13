@@ -302,7 +302,7 @@ compile-example() {
 
 # Because it depends on ASDL
 compile-parse() {
-  compile parse '' -I _gen
+  _compile-example parse '' -I _gen
 }
 
 run-python-example() {
