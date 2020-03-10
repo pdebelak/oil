@@ -218,9 +218,14 @@ arith-expr() {
   #_error-case '$(( ${var} = fd ))'
 
   # Invalid assignments
-  _error-case '$(( x+1 = fd ))'
+  _error-case '$(( x+1 = 42 ))'
   _error-case '$(( (x+42)++ ))'
   _error-case '$(( ++(x+42) ))'
+
+  # Note these aren't caught because '1' is an ArithWord like 0x$x
+  _error-case '$(( 1 = foo ))'
+  _error-case '$(( 1++ ))'
+  _error-case '$(( ++1 ))'
 }
 
 command-sub() {
