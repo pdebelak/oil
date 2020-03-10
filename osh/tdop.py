@@ -10,6 +10,7 @@ from _devbuild.gen.syntax_asdl import (
     word_t,
 )
 from _devbuild.gen.types_asdl import lex_mode_e
+from asdl import runtime
 from core.util import p_die
 from core import ui
 from mycpp import mylib
@@ -35,6 +36,30 @@ def IsIndexable(node):
   return node.tag_() == arith_expr_e.VarRef
   # TODO: x$foo[1] is also allowed
   #return node.tag_() in (arith_expr_e.VarRef, arith_expr_e.ArithWord)
+
+
+def ValidatePlace(node, span_id=runtime.NO_SPID):
+  # type: (arith_expr_t, int) -> None
+  """
+  Raise an exception if it's not a valid place
+  """
+  # Problem: 1++ and 1 = foo aren't valid
+
+  # (( x = 42 )) and (( x$var = 42 )) are OK
+  if node.tag_() in (arith_expr_e.VarRef, arith_expr_e.ArithWord):
+    return
+
+  UP_node = node
+  if node.tag_() == arith_expr_e.Binary:
+    node = cast(arith_expr__Binary, UP_node)
+    # (( a[i] = 42 )) and (( a$var[i] = 42 )) are OK
+    #
+    # But NOT (( a[i][i] = 42 )), because shell doesn't have nested arrays.
+    if (node.op_id == Id.Arith_LBracket and
+        node.tag_() in (arith_expr_e.VarRef, arith_expr_e.ArithWord)):
+      return
+
+  p_die("Assignment to invalid place", span_id=span_id)
 
 
 def ToLValue(node):
@@ -134,13 +159,9 @@ def LeftAssign(p, w, left, rbp):
   # type: (TdopParser, word_t, arith_expr_t, int) -> arith_expr_t
   """ Normal binary operator like 1+2 or 2*3, etc. """
   # x += 1, or a[i] += 1
-  lhs = ToLValue(left)
-  if lhs is None:
-    # TODO: It would be nice to point at 'left', but osh/word.py doesn't
-    # support arbitrary arith_expr_t.
-    #p_die("Can't assign to this expression", word=w)
-    p_die("Left-hand side of this assignment is invalid", word=w)
-  return arith_expr.BinaryAssign(word_.ArithId(w), lhs, p.ParseUntil(rbp))
+
+  ValidatePlace(left, span_id=word_.LeftMostSpanForWord(w))
+  return arith_expr.BinaryAssign(word_.ArithId(w), left, p.ParseUntil(rbp))
 
 
 #

@@ -19,10 +19,8 @@ def NullIncDec(p, w, bp):
   # type: (TdopParser, word_t, int) -> arith_expr_t
   """ ++x or ++x[1] """
   right = p.ParseUntil(bp)
-  child = tdop.ToLValue(right)
-  if child is None:
-    p_die("This value can't be assigned to", word=w)
-  return arith_expr.UnaryAssign(word_.ArithId(w), child)
+  tdop.ValidatePlace(right, span_id=word_.LeftMostSpanForWord(w))
+  return arith_expr.UnaryAssign(word_.ArithId(w), right)
 
 
 def NullUnaryPlus(p, t, bp):
@@ -50,10 +48,8 @@ def LeftIncDec(p, w, left, rbp):
   else:
     raise AssertionError()
 
-  child = tdop.ToLValue(left)
-  if child is None:
-    p_die("This value can't be assigned to", word=w)
-  return arith_expr.UnaryAssign(op_id, child)
+  tdop.ValidatePlace(left, span_id=word_.LeftMostSpanForWord(w))
+  return arith_expr.UnaryAssign(op_id, left)
 
 
 def LeftIndex(p, w, left, unused_bp):
