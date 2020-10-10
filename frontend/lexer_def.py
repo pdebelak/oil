@@ -459,6 +459,8 @@ LEXER_DEF[lex_mode_e.VSub_ArgDQ] = \
 
   # Another weird wart of bash/mksh: $'' is recognized but NOT ''!
   C("$'", Id.Left_SingleQuoteC),
+
+  R(r'[^\0]', Id.Lit_Other),
 ]
 
 # NOTE: Id.Ignored_LineCont is NOT supported in SQ state, as opposed to DQ
