@@ -74,8 +74,9 @@ _TILDE_LIKE = R(r'~[a-zA-Z0-9_.-]*', Id.Lit_TildeLike)
 _BACKSLASH = [
   # TODO: Should Oil make this stricter?  \a-\z, \A-\Z, \0-\9, should just be
   # written without \
+  # That's a lot of work since this is used in
+  # lex_mode_e.{ShCommand,VSub_ArgUnquoted,DBracket,ExtGlob,BashRegex}
 
-  # Used in lex_mode_e.{ShCommand,DBracket,ExtGlob,BashRegex}
   R(r'\\[^\n\0]', Id.Lit_EscapedChar),
   C('\\\n', Id.Ignored_LineCont),
 ]
