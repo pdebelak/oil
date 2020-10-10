@@ -457,10 +457,11 @@ LEXER_DEF[lex_mode_e.VSub_ArgDQ] = \
 
   R(r'[^$`/}"\0\\#%]+', Id.Lit_Chars),  # matches a line at most
 
+  # Weird wart: even in double quoted state, double quotes are allowed
+  C('"', Id.Left_DoubleQuote),
+
   # Another weird wart of bash/mksh: $'' is recognized but NOT ''!
   C("$'", Id.Left_SingleQuoteC),
-
-  R(r'[^\0]', Id.Lit_Other),
 ]
 
 # NOTE: Id.Ignored_LineCont is NOT supported in SQ state, as opposed to DQ
