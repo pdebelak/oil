@@ -139,7 +139,25 @@ class WordParser(WordEmitter):
     self.next_lex_mode = lex_mode_e.ShCommand
 
     # For consolidating \n\n -> \n
-    self.cursor_was_newline = False
+
+    # NEW STATE MACHINE
+    # 0: last token as NOT newline
+    # 1: last non-ignored token WAS newline
+    # 2: last non-ignored token WAS newline, AND we got an ignored comment
+    #
+    # So then what happens when we get a newline?
+    #
+    # Normal mode:
+    # 0. Emit
+    # 1. Skip it
+    # 2. Skip it
+    #
+    # Multiline mode:
+    # 0: Skip the newline!  We don't need to translate it into space
+    # 1: SYNTAX ERROR.  We expected ;
+    # 2: Skip it.  Comment
+    self.newline_state = 0
+
     # For integration with pgen2
     self.buffered_word = None  # type: word_t
     # for ### doc comments
@@ -1632,7 +1650,7 @@ class WordParser(WordEmitter):
       self._Next(lex_mode)
       if self.token_type == Id.Op_Newline:
       #if 0:
-        if self.cursor_was_newline:
+        if self.newline_state > 0:
           return no_word, True
 
       return cast(word_t, self.cur_token), False
@@ -1751,7 +1769,7 @@ class WordParser(WordEmitter):
         if not need_more:
           break
 
-    self.cursor_was_newline = (word_.CommandId(w) == Id.Op_Newline)
+    self.newline_state = 1  if word_.CommandId(w) == Id.Op_Newline else 0
     return w
 
   def ReadHereDocBody(self, parts):

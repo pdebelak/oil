@@ -47,6 +47,11 @@ one
 two
 ## END
 
+#### '... for' is not a for loop
+... for echo hi
+## STDOUT:
+## END
+
 # Notes:
 # - MakeParserForCommandSub() instantiates a new WordParser, so we can safetly
 # change state in the top-level one only
@@ -71,8 +76,4 @@ two
 # disturbance to the code.
 #
 # cursor_was_newline might need more state?
-
-
-
-
 
