@@ -29,63 +29,6 @@ install-re2c() {
 # Image definitions: dummy, dev-minimal, other-tests, ovm-tarball, cpp
 #
 
-other-tests() {
-  local -a packages=(
-    # common
-    git python2
-
-    libreadline-dev
-    python2-dev  # osh2oil needs build/dev.sh minimal
-
-    python3  # for py3-parse
-
-    r-base-core  # for r-libs
-  )
-
-  apt-get install -y "${packages[@]}"
-}
-
-other-tests-R() {
-  readonly R_PATH=~/R  # duplicates what's in test/common.sh
-
-  # Install to a directory that doesn't require root.  This requires setting
-  # R_LIBS_USER.  Or library(dplyr, lib.loc = "~/R", but the former is preferable.
-  mkdir -p ~/R
-
-  # Note: dplyr 1.0.3 as of January 2021 made these fail on Xenial.  See R 4.0
-  # installation below.
-  INSTALL_DEST=$R_PATH Rscript -e 'install.packages(c("dplyr", "tidyr", "stringr"), lib=Sys.getenv("INSTALL_DEST"), repos="https://cloud.r-project.org")'
-}
-
-cpp() {
-  local -a packages=(
-    # common
-    git python2
-
-    # retrieving deps -- TODO: move to build time
-    wget
-
-    # line_input.so needs this
-    libreadline-dev
-    python2-dev
-
-    python3-pip
-    # for MyPy virtualenv for requirements.txt -- TODO: move to build time.
-    python3-venv
-
-    ninja-build
-    # to create mycpp/_ninja/index.html
-    gawk
-
-    # for stable benchmarks
-    valgrind
-    # the shell benchmarks compare shells
-    busybox-static mksh zsh
-  )
-
-  apt-get install -y "${packages[@]}"
-}
-
 cpp-source-deps() {
   # Uh this doesn't work because it's created in the directory we're mounting!
   # At runtime we mount the newly cloned repo.
@@ -108,34 +51,6 @@ cpp-source-deps() {
   #
   # mycpp-pip
   # mycpp-git
-}
-
-ovm-tarball() {
-  local -a packages=(
-    # common
-    gcc git python2
-
-    # This is a separate package needed for re2c.  TODO: remove when we've
-    # built it into the image.
-    g++
-
-    # line_input.so needs this
-    libreadline-dev
-    python2-dev
-
-    # retrieving deps -- TODO: move to build time
-    wget
-    # for syscall measurements
-    strace
-
-    # for cmark and yajl
-    cmake
-
-    # test/spec-runner.sh needs this
-    gawk
-  )
-
-  apt-get install -y "${packages[@]}"
 }
 
 ovm-tarball-source-deps() {
