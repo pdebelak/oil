@@ -4,7 +4,7 @@ RUN apt-get update
 
 # Copy this file into the container so we can run it.
 WORKDIR /app
-COPY soil/image-deps.sh .
-RUN ./image-deps.sh dummy
+COPY soil/deps-apt.sh .
+RUN ./deps-apt.sh dummy
 
 CMD ["sh", "-c", "echo 'hello from oilshell/soil-dummy buildkit'"]

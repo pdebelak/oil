@@ -4,10 +4,11 @@ RUN apt-get update
 
 # Copy this file into the container so we can run it.
 WORKDIR /app
-COPY soil/image-deps.sh .
 
-RUN ./image-deps.sh dev-minimal
+COPY soil/deps-apt.sh .
+RUN ./deps-apt.sh dev-minimal
 
-RUN ./image-deps.sh dev-minimal-py
+COPY soil/deps-py.sh .
+RUN ./deps-py.sh dev-minimal
 
 CMD ["sh", "-c", "echo 'hello from oilshell/soil-dev-minimal buildkit'"]
