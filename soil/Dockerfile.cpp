@@ -2,12 +2,14 @@ FROM debian:buster-slim
 
 RUN apt-get update 
 
-# Copy this file into the container so we can run it.
-WORKDIR /app
-COPY soil/image-deps.sh .
+WORKDIR /build-temp
 
-RUN ./image-deps.sh cpp
+# Copy build scripts into the container and run them
 
-RUN ./image-deps.sh cpp-source-deps
+COPY soil/deps-apt.sh /build-temp/soil/deps-apt.sh
+RUN soil/deps-apt.sh cpp
+
+COPY soil/deps-tar.sh /build-temp/soil/deps-tar.sh
+RUN soil/deps-tar.sh cpp
 
 CMD ["sh", "-c", "echo 'hello from oilshell/soil-cpp buildkit'"]

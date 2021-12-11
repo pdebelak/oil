@@ -7,8 +7,12 @@ set -o nounset
 set -o pipefail
 set -o errexit
 
-main() {
-  echo 'Hello from deps-tar.sh'
+cpp() {
+  echo 'TODO: re2c'
+}
+
+ovm-tarball() {
+  echo 'TODO: re2c and more'
 }
 
 "$@"
